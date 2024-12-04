@@ -1,0 +1,97 @@
+erDiagram
+   CONNECTOR {
+       string name
+       string version
+       string description
+       json config_schema
+       json query_schema
+   }
+   CONNECTION {
+       int id
+       string connector_name
+       string name
+       json config
+   }
+   JOB {
+       int id
+       int primary_post_id
+   }
+   POST {
+       int id
+
+       int job_id
+       int connection_id
+       string unique_id
+
+       string url
+       string company
+       string title
+       string description
+       string location
+   }
+   JOB_STAGE {
+       int id
+       int stage_id
+       int job_id
+       datetime timestamp
+       text comment
+       string url
+   }
+   STAGE {
+       int id
+       string name
+       string color
+   }
+
+   QUERY {
+       int id
+       int schedule_id
+       int connection_id
+       datetime created
+       datetime started
+       datetime ended
+       string error_message
+       json query
+   }
+
+   QUERY_RESULT {
+       int id
+       int query_id
+       int post_id
+   }
+
+   QUERY_LOG {
+       int id
+       int query_id
+       datetime timestamp
+       text message
+   }
+
+   SCHEDULE {
+       int id
+       int connection_id
+       json query
+   }
+
+   JOB ||--o{ JOB_STAGE : "has many"
+   JOB_STAGE }|--|| STAGE : has
+
+
+
+   JOB ||--|{ POST : "has many"
+   CONNECTION o|--o{ POST : "has many"
+   CONNECTION }|--|| CONNECTOR : uses
+
+   CONNECTION ||--o{ QUERY : runs
+
+   SCHEDULE }o--|| CONNECTION : uses
+
+
+   SCHEDULE o|--O{ QUERY : "creates"
+
+
+   QUERY ||--o{ QUERY_RESULT : creates
+   QUERY ||--o{ QUERY_LOG : "has many"
+   QUERY_RESULT }|--|| POST : has
+
+
