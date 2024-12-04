@@ -1,0 +1,481 @@
+openapi: "3.0.3"
+info:
+  title: Job Flow API
+  version: "0.1.0"
+tags:
+  - name: Stages
+    description: The stages of a job application
+  - name: Connections
+    description: Connections to job posting sites
+  - name: Jobs
+    description: Induvidual jobs
+  - name: Posts
+    description: Job posts
+  - name: Queries
+    description: Queries sent to a connections
+paths:
+  /api/stages:
+    get:
+      tags: [Stages]
+      summary: List stages
+      responses:
+        200:
+          $ref: "#/components/responses/StageArrayRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    post:
+      tags: [Stages]
+      summary: Create a stage
+      requestBody:
+        $ref: "#/components/requestBodies/PostStageReq"
+      responses:
+        201:
+          $ref: "#/components/responses/StageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/stages/{stageId}:
+    parameters:
+      - $ref: "#/components/parameters/stageId"
+    get:
+      tags: [Stages]
+      summary: Get a stage
+      responses:
+        200:
+          $ref: "#/components/responses/StageRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Stages]
+      summary: Update a stage
+      requestBody:
+        $ref: "#/components/requestBodies/PutStageReq"
+
+      responses:
+        200:
+          $ref: "#/components/responses/StageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Stages]
+      summary: Delete a stage
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+
+  /api/connectors:
+    get:
+      tags: [Connections]
+      summary: List installed connectors
+      responses:
+        200:
+          $ref: "#/components/responses/ConnectorArrayRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/connections:
+    get:
+      tags: [Connections]
+      summary: List connections
+      responses:
+        200:
+          $ref: "#/components/responses/ConnectionArrayRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    post:
+      tags: [Connections]
+      summary: Create a connection
+      requestBody:
+        $ref: "#/components/requestBodies/PostConnectionReq"
+      responses:
+        201:
+          $ref: "#/components/responses/ConnectionRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/connections/{connectionId}:
+    parameters:
+      - $ref: "#/components/parameters/connectionId"
+    get:
+      tags: [Connections]
+      summary: Get a connection
+      responses:
+        200:
+          $ref: "#/components/responses/ConnectionRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Connections]
+      summary: Update a connection
+      requestBody:
+        $ref: "#/components/requestBodies/PutConnectionReq"
+      responses:
+        200:
+          $ref: "#/components/responses/ConnectionRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Connections]
+      summary: Delete a connection
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/queries:
+    get:
+      tags: [Queries]
+      responses:
+        200:
+          description: OK
+  /api/connections/{connectionId}/queries:
+    parameters:
+      - $ref: "#/components/parameters/connectionId"
+    get:
+      tags: [Queries]
+      responses:
+        200:
+          description: OK
+
+  /api/posts:
+    get:
+      tags: [Posts]
+      responses:
+        200:
+          description: OK
+
+  /api/queries/{queryId}:
+    parameters:
+      - $ref: "#/components/parameters/queryId"
+    get:
+      tags: [Queries]
+      responses:
+        200:
+          description: OK
+  /api/queries/{queryId}/results:
+    parameters:
+      - $ref: "#/components/parameters/queryId"
+    get:
+      tags: [Queries]
+      responses:
+        200:
+          description: OK
+  /api/queries/{queryId}/logs:
+    parameters:
+      - $ref: "#/components/parameters/queryId"
+    get:
+      tags: [Queries]
+      responses:
+        200:
+          description: OK
+  /api/jobs:
+    get:
+      tags: [Jobs]
+      responses:
+        200:
+          description: OK
+  /api/jobs/{jobId}:
+    parameters:
+      - $ref: "#/components/parameters/jobId"
+    get:
+      tags: [Jobs]
+      responses:
+        200:
+          description: OK
+  /api/jobs/{jobId}/stages:
+    parameters:
+      - $ref: "#/components/parameters/jobId"
+    get:
+      tags: [Jobs]
+      responses:
+        200:
+          description: OK
+  /api/jobs/{jobId}/stages/{jobStageId}:
+    parameters:
+      - $ref: "#/components/parameters/jobId"
+      - $ref: "#/components/parameters/jobStageId"
+    get:
+      tags: [Jobs]
+      responses:
+        200:
+          description: OK
+
+components:
+  parameters:
+    stageId:
+      in: path
+      name: stageId
+      description: The id of a stage
+      required: true
+      schema:
+        type: integer
+    connectionId:
+      in: path
+      name: connectionId
+      description: The id of a connection
+      required: true
+      schema:
+        type: integer
+    queryId:
+      in: path
+      name: queryId
+      description: The id of a query
+      required: true
+      schema:
+        type: integer
+
+    jobId:
+      in: path
+      name: jobId
+      description: The id of a job
+      required: true
+      schema:
+        type: integer
+    jobStageId:
+      in: path
+      name: jobStageId
+      description: The id of a stage of a specific job
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    ErrorRes:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            status: 500
+            name: "Error"
+            message: "I'm sorry Dave. I'm afraid I can't do that."
+    BadRequestRes:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            status: 400
+            name: "Bad Request"
+            message: "request/params/contextId must be integer"
+    NotFoundRes:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            status: 404
+            name: "Not Found"
+            message: "Item not found"
+    NoContentRes:
+      description: No Content
+    StageArrayRes:
+      description: Stage Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StageArray"
+    StageRes:
+      description: Stage
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Stage"
+    ConnectorArrayRes:
+      description: Connector Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ConnectorArray"
+    ConnectionArrayRes:
+      description: Connection Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ConnectionArray"
+    ConnectionRes:
+      description: Connection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Connection"
+
+  requestBodies:
+    PostStageReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: "#/components/schemas/Stage/properties/name"
+              color:
+                $ref: "#/components/schemas/Stage/properties/color"
+    PutStageReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: "#/components/schemas/Connection/properties/name"
+              color:
+                $ref: "#/components/schemas/Stage/properties/color"
+    PostConnectionReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                $ref: "#/components/schemas/Connection/properties/connector"
+              name:
+                $ref: "#/components/schemas/Connection/properties/name"
+              config:
+                $ref: "#/components/schemas/Connection/properties/config"
+
+    PutConnectionReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                $ref: "#/components/schemas/Connection/properties/connector"
+              config:
+                $ref: "#/components/schemas/Connection/properties/config"
+
+  schemas:
+    Stage:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: Interviewing
+        color:
+          type: string
+          example: "#6200ff"
+          description: Hex code of color used to identify stage
+    StageArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Stage"
+
+    Connector:
+      type: object
+      properties:
+        name:
+          type: string
+          example: linkedin
+        title:
+          type: string
+          example: LinkedIn
+        description:
+          type: string
+          example: Queries linked.com for job postings
+        configSchema:
+          type: object
+
+    ConnectorArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Connector"
+
+    Connection:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id of connection
+        connector:
+          type: string
+          description: name of the connector
+          example: ACME Jobs
+        name:
+          type: string
+          example: Developer jobs on ACME Jobs
+          description: Name of the connection
+
+        config:
+          nullable: true
+          type: object
+          description: Configuration of connection that matches `configSchema` of connector
+
+    ConnectionArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Connection"
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+        comments:
+          type: string
+          example: Custom notes about job
+    JobStage:
+      type: object
+      properties:
+        id:
+          type: integer
+        job_id:
+          type: integer
+          description: Id of the job
+        stage_id:
+          type: integer
+        timestamp:
+          $ref: "#/components/schemas/Timestamp"
+        comments:
+          type: string
+          example: Comments about stage transition
+        url:
+          type: string
+          example: https://mail.google.com/mail/u/0/#inbox/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    Timestamp:
+      type: string
+      format: date-time
+      example: 2024-01-01T00:00:00Z
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP Response Status Code
+          example: 500
+        name:
+          type: string
+          description: A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4)
+          example: Error
+        message:
+          type: string
+          description: A human readable message related to the current error which may be displayed to the user of the api.
+          example: I'm sorry Dave. I'm afraid I can't do that.
