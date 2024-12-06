@@ -3,77 +3,19 @@ info:
   title: Job Flow API
   version: "0.1.0"
 tags:
-  - name: Stages
-    description: The stages of a job application
   - name: Connections
     description: Connections to job posting sites
+  - name: Stages
+    description: The stages of a job application
   - name: Jobs
-    description: Induvidual jobs
+    description: Jobs applications being tracked
+  - name: Job Stages
+    description: Stages of job applications
   - name: Posts
     description: Job posts
   - name: Queries
     description: Queries sent to a connections
 paths:
-  /api/stages:
-    get:
-      tags: [Stages]
-      summary: List stages
-      responses:
-        200:
-          $ref: "#/components/responses/StageArrayRes"
-        500:
-          $ref: "#/components/responses/ErrorRes"
-    post:
-      tags: [Stages]
-      summary: Create a stage
-      requestBody:
-        $ref: "#/components/requestBodies/PostStageReq"
-      responses:
-        201:
-          $ref: "#/components/responses/StageRes"
-        400:
-          $ref: "#/components/responses/BadRequestRes"
-        500:
-          $ref: "#/components/responses/ErrorRes"
-  /api/stages/{stageId}:
-    parameters:
-      - $ref: "#/components/parameters/stageId"
-    get:
-      tags: [Stages]
-      summary: Get a stage
-      responses:
-        200:
-          $ref: "#/components/responses/StageRes"
-        404:
-          $ref: "#/components/responses/NotFoundRes"
-        500:
-          $ref: "#/components/responses/ErrorRes"
-    put:
-      tags: [Stages]
-      summary: Update a stage
-      requestBody:
-        $ref: "#/components/requestBodies/PutStageReq"
-
-      responses:
-        200:
-          $ref: "#/components/responses/StageRes"
-        400:
-          $ref: "#/components/responses/BadRequestRes"
-        404:
-          $ref: "#/components/responses/NotFoundRes"
-        500:
-          $ref: "#/components/responses/ErrorRes"
-    delete:
-      tags: [Stages]
-      summary: Delete a stage
-      responses:
-        204:
-          $ref: "#/components/responses/NoContentRes"
-        404:
-          $ref: "#/components/responses/NotFoundRes"
-        500:
-          $ref: "#/components/responses/ErrorRes"
-
   /api/connectors:
     get:
       tags: [Connections]
@@ -141,6 +83,182 @@ paths:
           $ref: "#/components/responses/NotFoundRes"
         500:
           $ref: "#/components/responses/ErrorRes"
+  /api/stages:
+    get:
+      tags: [Stages]
+      summary: List stages
+      responses:
+        200:
+          $ref: "#/components/responses/StageArrayRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    post:
+      tags: [Stages]
+      summary: Create a stage
+      requestBody:
+        $ref: "#/components/requestBodies/PostStageReq"
+      responses:
+        201:
+          $ref: "#/components/responses/StageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/stages/{stageId}:
+    parameters:
+      - $ref: "#/components/parameters/stageId"
+    get:
+      tags: [Stages]
+      summary: Get a stage
+      responses:
+        200:
+          $ref: "#/components/responses/StageRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Stages]
+      summary: Update a stage
+      requestBody:
+        $ref: "#/components/requestBodies/PutStageReq"
+
+      responses:
+        200:
+          $ref: "#/components/responses/StageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Stages]
+      summary: Delete a stage
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/jobs:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/searchFilter"
+      tags: [Jobs]
+      responses:
+        200:
+          $ref: "#/components/responses/JobCollectionRes"
+    post:
+      tags: [Jobs]
+      requestBody:
+        $ref: "#/components/requestBodies/PostJobReq"
+      responses:
+        201:
+          $ref: "#/components/responses/JobRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/jobs/{jobId}:
+    parameters:
+      - $ref: "#/components/parameters/jobId"
+    get:
+      tags: [Jobs]
+      responses:
+        200:
+          $ref: "#/components/responses/JobRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Jobs]
+      requestBody:
+        $ref: "#/components/requestBodies/PutJobReq"
+      responses:
+        200:
+          $ref: "#/components/responses/JobRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Jobs]
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/jobs/{jobId}/stages:
+    parameters:
+      - $ref: "#/components/parameters/jobId"
+    get:
+      tags: [Job Stages]
+      summary: List stages of a job
+      responses:
+        200:
+          $ref: "#/components/responses/JobStageArrayRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    post:
+      tags: [Job Stages]
+      summary: Create a job stage
+      requestBody:
+        $ref: "#/components/requestBodies/PostJobStageReq"
+      responses:
+        201:
+          $ref: "#/components/responses/JobStageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/job-stages/{jobStageId}:
+    parameters:
+      - $ref: "#/components/parameters/jobStageId"
+    get:
+      tags: [Job Stages]
+      responses:
+        200:
+          $ref: "#/components/responses/JobStageRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Job Stages]
+      summary: Update a job stage
+      requestBody:
+        $ref: "#/components/requestBodies/PutJobStageReq"
+      responses:
+        200:
+          $ref: "#/components/responses/JobStageRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Job Stages]
+      summary: Delete a job stage
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+
   /api/queries:
     get:
       tags: [Queries]
@@ -155,14 +273,12 @@ paths:
       responses:
         200:
           description: OK
-
   /api/posts:
     get:
       tags: [Posts]
       responses:
         200:
           description: OK
-
   /api/queries/{queryId}:
     parameters:
       - $ref: "#/components/parameters/queryId"
@@ -187,40 +303,32 @@ paths:
       responses:
         200:
           description: OK
-  /api/jobs:
-    get:
-      tags: [Jobs]
-      responses:
-        200:
-          description: OK
-  /api/jobs/{jobId}:
-    parameters:
-      - $ref: "#/components/parameters/jobId"
-    get:
-      tags: [Jobs]
-      responses:
-        200:
-          description: OK
-  /api/jobs/{jobId}/stages:
-    parameters:
-      - $ref: "#/components/parameters/jobId"
-    get:
-      tags: [Jobs]
-      responses:
-        200:
-          description: OK
-  /api/jobs/{jobId}/stages/{jobStageId}:
-    parameters:
-      - $ref: "#/components/parameters/jobId"
-      - $ref: "#/components/parameters/jobStageId"
-    get:
-      tags: [Jobs]
-      responses:
-        200:
-          description: OK
 
 components:
   parameters:
+    pageSize:
+      in: query
+      name: pageSize
+      description: The maximum number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    page:
+      in: query
+      name: page
+      description: The page of the collection
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    searchFilter:
+      in: query
+      name: search
+      description: Search query
+      required: false
+      schema:
+        type: string
     stageId:
       in: path
       name: stageId
@@ -291,18 +399,6 @@ components:
             message: "Item not found"
     NoContentRes:
       description: No Content
-    StageArrayRes:
-      description: Stage Array
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StageArray"
-    StageRes:
-      description: Stage
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Stage"
     ConnectorArrayRes:
       description: Connector Array
       content:
@@ -321,8 +417,73 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Connection"
+    StageRes:
+      description: Stage
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Stage"
+
+    StageArrayRes:
+      description: Stage Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StageArray"
+
+    JobRes:
+      description: Job
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Job"
+
+    JobCollectionRes:
+      description: Job Collection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobCollection"
+
+    JobStageRes:
+      description: Job Stage
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobStage"
+
+    JobStageArrayRes:
+      description: Job Stage Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobStageArray"
 
   requestBodies:
+    PostConnectionReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                $ref: "#/components/schemas/Connection/properties/connector"
+              name:
+                $ref: "#/components/schemas/Connection/properties/name"
+              config:
+                $ref: "#/components/schemas/Connection/properties/config"
+    PutConnectionReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                $ref: "#/components/schemas/Connection/properties/connector"
+              config:
+                $ref: "#/components/schemas/Connection/properties/config"
     PostStageReq:
       required: true
       content:
@@ -342,34 +503,61 @@ components:
             type: object
             properties:
               name:
-                $ref: "#/components/schemas/Connection/properties/name"
+                $ref: "#/components/schemas/Stage/properties/name"
               color:
                 $ref: "#/components/schemas/Stage/properties/color"
-    PostConnectionReq:
+    PostJobReq:
       required: true
       content:
         application/json:
           schema:
             type: object
             properties:
-              connector:
-                $ref: "#/components/schemas/Connection/properties/connector"
-              name:
-                $ref: "#/components/schemas/Connection/properties/name"
-              config:
-                $ref: "#/components/schemas/Connection/properties/config"
-
-    PutConnectionReq:
+              primaryPostId:
+                $ref: "#/components/schemas/Job/properties/primaryPostId"
+              comments:
+                $ref: "#/components/schemas/Job/properties/comments"
+    PutJobReq:
       required: true
       content:
         application/json:
           schema:
             type: object
             properties:
-              connector:
-                $ref: "#/components/schemas/Connection/properties/connector"
-              config:
-                $ref: "#/components/schemas/Connection/properties/config"
+              primaryPostId:
+                $ref: "#/components/schemas/Job/properties/primaryPostId"
+              comments:
+                $ref: "#/components/schemas/Job/properties/comments"
+    PostJobStageReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              stageId:
+                $ref: "#/components/schemas/JobStage/properties/stageId"
+              timestamp:
+                $ref: "#/components/schemas/JobStage/properties/timestamp"
+              comments:
+                $ref: "#/components/schemas/JobStage/properties/comments"
+              url:
+                $ref: "#/components/schemas/JobStage/properties/url"
+    PutJobStageReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              stageId:
+                $ref: "#/components/schemas/JobStage/properties/stageId"
+              timestamp:
+                $ref: "#/components/schemas/JobStage/properties/timestamp"
+              comments:
+                $ref: "#/components/schemas/JobStage/properties/comments"
+              url:
+                $ref: "#/components/schemas/JobStage/properties/url"
 
   schemas:
     Stage:
@@ -388,27 +576,26 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Stage"
-
     Connector:
       type: object
       properties:
         name:
           type: string
           example: linkedin
-        title:
+        version:
           type: string
-          example: LinkedIn
+          example: "0.1.0"
         description:
           type: string
           example: Queries linked.com for job postings
         configSchema:
           type: object
-
+        querySchema:
+          type: object
     ConnectorArray:
       type: array
       items:
         $ref: "#/components/schemas/Connector"
-
     Connection:
       type: object
       properties:
@@ -428,12 +615,10 @@ components:
           nullable: true
           type: object
           description: Configuration of connection that matches `configSchema` of connector
-
     ConnectionArray:
       type: array
       items:
         $ref: "#/components/schemas/Connection"
-
     Job:
       type: object
       properties:
@@ -442,15 +627,38 @@ components:
         comments:
           type: string
           example: Custom notes about job
+        primaryPostId:
+          type: integer
+
+        _embedded:
+          type: object
+          properties:
+            currentStage:
+              $ref: "#/components/schemas/Stage"
+            primaryPost:
+              $ref: "#/components/schemas/Post"
+    JobCollection:
+      type: object
+      description: A collection of jobs
+      allOf:
+        - $ref: "#/components/schemas/Collection"
+      properties:
+        _embedded:
+          type: object
+          properties:
+            jobs:
+              type: array
+              items:
+                $ref: "#/components/schemas/Job"
     JobStage:
       type: object
       properties:
         id:
           type: integer
-        job_id:
+        jobId:
           type: integer
           description: Id of the job
-        stage_id:
+        stageId:
           type: integer
         timestamp:
           $ref: "#/components/schemas/Timestamp"
@@ -460,6 +668,17 @@ components:
         url:
           type: string
           example: https://mail.google.com/mail/u/0/#inbox/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        _embedded:
+          type: object
+          properties:
+            stage:
+              $ref: "#/components/schemas/Stage"
+    JobStageArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/JobStage"
+    Post:
+      type: object
     Timestamp:
       type: string
       format: date-time
@@ -479,3 +698,27 @@ components:
           type: string
           description: A human readable message related to the current error which may be displayed to the user of the api.
           example: I'm sorry Dave. I'm afraid I can't do that.
+    Collection:
+      type: object
+      description: A paginated collection of items
+      properties:
+        page:
+          type: integer
+          description: The current page
+          example: 1
+        pageSize:
+          type: integer
+          description: The maximum number of items per page
+          example: 5
+        pages:
+          type: integer
+          description: The total number of pages
+          example: 5
+        count:
+          type: integer
+          description: The number of items returned
+          example: 5
+        total:
+          type: integer
+          description: The total number of items
+          example: 25
