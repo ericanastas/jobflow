@@ -14,8 +14,12 @@ erDiagram
    }
    JOB {
        int id
+
        int primary_post_id
        text comments
+
+       datetime created
+       datetime modified
    }
    POST {
        int id
@@ -29,6 +33,9 @@ erDiagram
        string title
        string description
        string location
+
+       datetime created
+       datetime modified
    }
    JOB_STAGE {
        int id
@@ -40,6 +47,7 @@ erDiagram
    }
    STAGE {
        int id
+       int sort_order
        string name
        string color
    }
