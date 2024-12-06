@@ -1,17 +1,5 @@
 erDiagram
-   CONNECTOR {
-       string name
-       string version
-       string description
-       json config_schema
-       json query_schema
-   }
-   CONNECTION {
-       int id
-       string connector_name
-       string name
-       json config
-   }
+
    JOB {
        int id
 
@@ -21,6 +9,23 @@ erDiagram
        datetime created
        datetime modified
    }
+
+   STAGE {
+       int id
+       int sort_order
+       string name
+       string color
+   }
+
+   JOB_STAGE {
+       int id
+       int stage_id
+       int job_id
+       datetime timestamp
+       text comment
+       string url
+   }
+
    POST {
        int id
 
@@ -37,19 +42,28 @@ erDiagram
        datetime created
        datetime modified
    }
-   JOB_STAGE {
-       int id
-       int stage_id
-       int job_id
-       datetime timestamp
-       text comment
-       string url
-   }
-   STAGE {
-       int id
-       int sort_order
+
+   CONNECTOR {
        string name
-       string color
+       string version
+       string description
+       json config_schema
+       json query_schema
+   }
+
+   CONNECTION {
+       int id
+       string connector_name
+       string name
+       json config
+   }
+
+   SCHEDULE {
+       int id
+       int connection_id
+       bool enabled
+       interval query_interval
+       json query
    }
 
    QUERY {
@@ -76,33 +90,16 @@ erDiagram
        text message
    }
 
-   SCHEDULE {
-       int id
-       int connection_id
-       bool enabled
-       interval query_interval
-       json query
-   }
-
-   JOB ||--o{ JOB_STAGE : "has many"
-   JOB_STAGE }|--|| STAGE : has
-
-
-
-   JOB ||--|{ POST : "has many"
-   CONNECTION o|--o{ POST : "has many"
-   CONNECTION }|--|| CONNECTOR : uses
-
-   CONNECTION ||--o{ QUERY : runs
-
-   SCHEDULE }o--|| CONNECTION : uses
-
-
-   SCHEDULE o|--O{ QUERY : "creates"
-
-
-   QUERY ||--o{ QUERY_RESULT : creates
-   QUERY ||--o{ QUERY_LOG : "has many"
-   QUERY_RESULT }o--|| POST : has
+   STAGE ||--|{ JOB_STAGE : ""
+   JOB ||--o{ JOB_STAGE : ""
+   JOB ||--|{ POST : ""
+   CONNECTOR ||--o{ CONNECTION  : ""
+   CONNECTION o|--o{ POST : ""
+   CONNECTION ||--o{ QUERY : ""
+   CONNECTION ||--o{ SCHEDULE : ""
+   SCHEDULE o|--O{ QUERY : ""
+   POST ||--o{ QUERY_RESULT : ""
+   QUERY ||--o{ QUERY_RESULT : ""
+   QUERY ||--o{ QUERY_LOG : ""
 
 
