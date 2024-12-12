@@ -1,20 +1,25 @@
 openapi: "3.0.3"
 info:
-  title: Job Flow API
+  title: Joboodle API
   version: "0.1.0"
+servers:
+  - url: https://joboodle.com/api
 tags:
-  - name: Connections
-    description: Connections to job posting sites
-  - name: Stages
-    description: The stages of a job application
   - name: Jobs
     description: Jobs applications being tracked
+  - name: Stages
+    description: The stages of a job application
   - name: Job Stages
     description: Stages of job applications
   - name: Posts
     description: Job posts
+  - name: Connections
+    description: Connections to job posting sites
   - name: Queries
     description: Queries sent to a connections
+  - name: Schedules
+    description: Scheduled queries
+
 paths:
   /api/connectors:
     get:
@@ -145,15 +150,20 @@ paths:
   /api/jobs:
     get:
       parameters:
+        - $ref: "#/components/parameters/searchFilter"
+        - $ref: "#/components/parameters/stageFilter"
+        - $ref: "#/components/parameters/jobsSortBy"
+        - $ref: "#/components/parameters/sortDesc"
         - $ref: "#/components/parameters/pageSize"
         - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/searchFilter"
       tags: [Jobs]
+      summary: Lists jobs
       responses:
         200:
           $ref: "#/components/responses/JobCollectionRes"
     post:
       tags: [Jobs]
+      summary: Create a job
       requestBody:
         $ref: "#/components/requestBodies/PostJobReq"
       responses:
@@ -168,6 +178,7 @@ paths:
       - $ref: "#/components/parameters/jobId"
     get:
       tags: [Jobs]
+      summary: Get a job
       responses:
         200:
           $ref: "#/components/responses/JobRes"
@@ -179,6 +190,7 @@ paths:
           $ref: "#/components/responses/ErrorRes"
     put:
       tags: [Jobs]
+      summary: Update a job
       requestBody:
         $ref: "#/components/requestBodies/PutJobReq"
       responses:
@@ -192,6 +204,7 @@ paths:
           $ref: "#/components/responses/ErrorRes"
     delete:
       tags: [Jobs]
+      summary: Delete a job
       responses:
         204:
           $ref: "#/components/responses/NoContentRes"
@@ -258,6 +271,86 @@ paths:
           $ref: "#/components/responses/NotFoundRes"
         500:
           $ref: "#/components/responses/ErrorRes"
+  /api/posts:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/searchFilter"
+        - $ref: "#/components/parameters/incomming"
+        - $ref: "#/components/parameters/postsSortBy"
+        - $ref: "#/components/parameters/sortDesc"
+        - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/page"
+
+      tags: [Posts]
+      summary: List posts
+      responses:
+        200:
+          $ref: "#/components/responses/PostCollectionRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    post:
+      tags: [Posts]
+      summary: Create a post
+      requestBody:
+        $ref: "#/components/requestBodies/PostPostReq"
+      responses:
+        201:
+          $ref: "#/components/responses/PostRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+  /api/posts/{postId}:
+    parameters:
+      - $ref: "#/components/parameters/postId"
+    get:
+      tags: [Posts]
+      summary: Get a post
+      responses:
+        200:
+          $ref: "#/components/responses/PostRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    put:
+      tags: [Posts]
+      summary: Update a post
+      requestBody:
+        $ref: "#/components/requestBodies/PutPostReq"
+      responses:
+        200:
+          $ref: "#/components/responses/PostRes"
+        400:
+          $ref: "#/components/responses/BadRequestRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+    delete:
+      tags: [Posts]
+      summary: Delete a post
+      responses:
+        204:
+          $ref: "#/components/responses/NoContentRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
+
+  /api/posts/{postId}/matching-jobs:
+    parameters:
+      - $ref: "#/components/parameters/postId"
+    get:
+      tags: [Posts]
+      summary: Get suggested jobs matching post
+      responses:
+        200:
+          $ref: "#/components/responses/JobArrayRes"
+        404:
+          $ref: "#/components/responses/NotFoundRes"
+        500:
+          $ref: "#/components/responses/ErrorRes"
 
   /api/queries:
     get:
@@ -273,12 +366,7 @@ paths:
       responses:
         200:
           description: OK
-  /api/posts:
-    get:
-      tags: [Posts]
-      responses:
-        200:
-          description: OK
+
   /api/queries/{queryId}:
     parameters:
       - $ref: "#/components/parameters/queryId"
@@ -329,6 +417,64 @@ components:
       required: false
       schema:
         type: string
+
+    sortDesc:
+      in: query
+      name: sortDesc
+      description: Sort items in descending order. Sort is accending by default if ommitted.
+      required: false
+      schema:
+        type: boolean
+
+    jobsSortBy:
+      in: query
+      name: sortBy
+      description: Field to sort jobs by
+      required: false
+      schema:
+        type: string
+        enum:
+          - created
+          - modified
+          - stage
+          - company
+          - location
+          - title
+
+    postsSortBy:
+      in: query
+      name: sortBy
+      description: Field to sort posts by
+      required: false
+      schema:
+        type: string
+        enum:
+          - created
+          - modified
+          - company
+          - location
+          - title
+
+    stageFilter:
+      in: query
+      description: Filter by current stage
+      name: stageIds
+      required: false
+      explode: false
+      schema:
+        type: array
+        uniqueItems: true
+        items:
+          type: integer
+
+    incomming:
+      in: query
+      name: incomming
+      description: Filter incoming posts that have or have not been assigned to a job
+      required: false
+      schema:
+        type: boolean
+
     stageId:
       in: path
       name: stageId
@@ -350,7 +496,6 @@ components:
       required: true
       schema:
         type: integer
-
     jobId:
       in: path
       name: jobId
@@ -362,6 +507,13 @@ components:
       in: path
       name: jobStageId
       description: The id of a stage of a specific job
+      required: true
+      schema:
+        type: integer
+    postId:
+      in: path
+      name: postId
+      description: The id of job posting
       required: true
       schema:
         type: integer
@@ -445,6 +597,13 @@ components:
           schema:
             $ref: "#/components/schemas/JobCollection"
 
+    JobArrayRes:
+      description: Job Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobArray"
+
     JobStageRes:
       description: Job Stage
       content:
@@ -459,6 +618,27 @@ components:
           schema:
             $ref: "#/components/schemas/JobStageArray"
 
+    PostRes:
+      description: Post
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Post"
+
+    PostArrayRes:
+      description: Post Array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PostArray"
+
+    PostCollectionRes:
+      description: Post Collection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PostCollection"
+
   requestBodies:
     PostConnectionReq:
       required: true
@@ -467,8 +647,8 @@ components:
           schema:
             type: object
             properties:
-              connector:
-                $ref: "#/components/schemas/Connection/properties/connector"
+              connectorName:
+                $ref: "#/components/schemas/Connection/properties/connectorName"
               name:
                 $ref: "#/components/schemas/Connection/properties/name"
               config:
@@ -480,8 +660,8 @@ components:
           schema:
             type: object
             properties:
-              connector:
-                $ref: "#/components/schemas/Connection/properties/connector"
+              name:
+                $ref: "#/components/schemas/Connection/properties/name"
               config:
                 $ref: "#/components/schemas/Connection/properties/config"
     PostStageReq:
@@ -491,6 +671,8 @@ components:
           schema:
             type: object
             properties:
+              sortOrder:
+                $ref: "#/components/schemas/Stage/properties/sortOrder"
               name:
                 $ref: "#/components/schemas/Stage/properties/name"
               color:
@@ -502,6 +684,8 @@ components:
           schema:
             type: object
             properties:
+              sortOrder:
+                $ref: "#/components/schemas/Stage/properties/sortOrder"
               name:
                 $ref: "#/components/schemas/Stage/properties/name"
               color:
@@ -512,6 +696,8 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - primaryPostId
             properties:
               primaryPostId:
                 $ref: "#/components/schemas/Job/properties/primaryPostId"
@@ -534,6 +720,9 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - stageId
+              - timestamp
             properties:
               stageId:
                 $ref: "#/components/schemas/JobStage/properties/stageId"
@@ -549,6 +738,9 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - stageId
+              - timestamp
             properties:
               stageId:
                 $ref: "#/components/schemas/JobStage/properties/stageId"
@@ -559,11 +751,62 @@ components:
               url:
                 $ref: "#/components/schemas/JobStage/properties/url"
 
+    PostPostReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - company
+              - title
+              - description
+              - location
+            properties:
+              jobId:
+                $ref: "#/components/schemas/Post/properties/jobId"
+              url:
+                $ref: "#/components/schemas/Post/properties/url"
+              company:
+                $ref: "#/components/schemas/Post/properties/company"
+              location:
+                $ref: "#/components/schemas/Post/properties/location"
+              title:
+                $ref: "#/components/schemas/Post/properties/title"
+              description:
+                $ref: "#/components/schemas/Post/properties/description"
+    PutPostReq:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - company
+              - location
+              - description
+            properties:
+              jobId:
+                $ref: "#/components/schemas/Post/properties/jobId"
+              url:
+                $ref: "#/components/schemas/Post/properties/url"
+              comments:
+                $ref: "#/components/schemas/Post/properties/company"
+              location:
+                $ref: "#/components/schemas/Post/properties/location"
+              title:
+                $ref: "#/components/schemas/Post/properties/title"
+              description:
+                $ref: "#/components/schemas/Post/properties/description"
+
   schemas:
     Stage:
       type: object
       properties:
         id:
+          type: integer
+        sortOrder:
           type: integer
         name:
           type: string
@@ -602,13 +845,13 @@ components:
         id:
           type: integer
           description: Id of connection
-        connector:
+        connectorName:
           type: string
           description: name of the connector
           example: ACME Jobs
         name:
           type: string
-          example: Developer jobs on ACME Jobs
+          example: ACME Job Board Site
           description: Name of the connection
 
         config:
@@ -626,9 +869,13 @@ components:
           type: string
         comments:
           type: string
-          example: Custom notes about job
+          example: Comments about job
         primaryPostId:
           type: integer
+        created:
+          $ref: "#/components/schemas/Timestamp"
+        modified:
+          $ref: "#/components/schemas/Timestamp"
 
         _embedded:
           type: object
@@ -650,6 +897,10 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/Job"
+    JobArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Job"
     JobStage:
       type: object
       properties:
@@ -679,6 +930,68 @@ components:
         $ref: "#/components/schemas/JobStage"
     Post:
       type: object
+      properties:
+        id:
+          type: integer
+        jobId:
+          type: integer
+          nullable: true
+        isPrimary:
+          type: boolean
+          nullable: true
+        connectionId:
+          type: integer
+          nullable: true
+        uniqueId:
+          type: string
+          nullable: true
+          example: ABC123
+        url:
+          type: string
+          example: https://www.acme.com/jobs/rocket-surgeon
+        company:
+          type: string
+          example: ACME Inc
+        location:
+          type: string
+          example: San Francisco, CA
+        title:
+          type: string
+          example: Rocket Surgeon
+        description:
+          type: string
+          example: Combine the precision of a rocket scientist with the hands-on expertise of a brain surgeon to troubleshoot complex systems and occasionally remind people that duct tape isn't always the solution. Must thrive under pressure, preferably without launching it into orbit.
+        _embedded:
+          type: object
+          properties:
+            connection:
+              type: object
+              properties:
+                id:
+                  $ref: "#/components/schemas/Connection/properties/id"
+                name:
+                  $ref: "#/components/schemas/Connection/properties/name"
+                connectorName:
+                  $ref: "#/components/schemas/Connection/properties/connectorName"
+
+    PostArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Post"
+
+    PostCollection:
+      type: object
+      description: A collection of posts
+      allOf:
+        - $ref: "#/components/schemas/Collection"
+      properties:
+        _embedded:
+          type: object
+          properties:
+            posts:
+              type: array
+              items:
+                $ref: "#/components/schemas/Post"
     Timestamp:
       type: string
       format: date-time
